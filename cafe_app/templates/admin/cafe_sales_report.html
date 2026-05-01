@@ -1,0 +1,728 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #150908;
+    --bg-2: #21100d;
+    --panel: #fdf8f4;
+    --panel-2: #f5ede4;
+    --panel-3: #ede2d6;
+    --line: #dfd1c4;
+    --ink: #2a1a12;
+    --muted: #8a6e5e;
+    --accent: #c8603a;
+    --accent-2: #e8a87c;
+    --green: #2d8a4e;
+    --green-bg: #e8f7ed;
+    --gold: #a07010;
+    --gold-bg: #fef4d8;
+    --red: #c0392b;
+    --red-bg: #fcecea;
+    --blue: #2471a3;
+    --blue-bg: #eaf4fb;
+    --radius: 20px;
+    --shadow: 0 12px 38px rgba(0, 0, 0, 0.22);
+  }
+
+  body, #container {
+    background:
+      radial-gradient(circle at top left, rgba(200, 96, 58, 0.22), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(108, 28, 7, 0.28), transparent 30%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    color: var(--ink);
+    font-family: "Outfit", sans-serif;
+  }
+
+  #header {
+    background: rgba(16, 7, 4, 0.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(232, 168, 124, 0.14);
+  }
+
+  #branding h1,
+  #branding h1 a:link,
+  #branding h1 a:visited,
+  #user-tools,
+  #user-tools a {
+    color: #f5ede4;
+  }
+
+  #content {
+    padding: 26px 30px 40px;
+  }
+
+  .report-page {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    gap: 18px;
+  }
+
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 10px;
+  }
+
+  .hero h1 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(42px, 5vw, 66px);
+    line-height: 0.95;
+    font-weight: 400;
+    color: #f5ede4;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-2);
+  }
+
+  .hero p {
+    margin: 10px 0 0;
+    color: rgba(245, 237, 228, 0.64);
+    max-width: 640px;
+    font-size: 14px;
+  }
+
+  .action-row,
+  .period-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .period-pill,
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(232, 168, 124, 0.2);
+    background: rgba(232, 168, 124, 0.05);
+    color: rgba(245, 237, 228, 0.7);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .period-pill.active,
+  .action-link:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .kpi-grid,
+  .row-two,
+  .row-three {
+    display: grid;
+    gap: 14px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .row-two {
+    grid-template-columns: 1.6fr 1fr;
+  }
+
+  .row-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .card {
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .kpi-card {
+    position: relative;
+    padding: 24px 22px 20px;
+  }
+
+  .kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 3px;
+  }
+
+  .kpi-card.revenue::before { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  .kpi-card.orders::before { background: linear-gradient(90deg, var(--blue), #5dade2); }
+  .kpi-card.average::before { background: linear-gradient(90deg, var(--gold), #f4d03f); }
+  .kpi-card.items::before { background: linear-gradient(90deg, var(--green), #58d68d); }
+
+  .kpi-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .kpi-value {
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(30px, 3vw, 44px);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .kpi-card.revenue .kpi-value { color: var(--accent); }
+  .kpi-card.orders .kpi-value { color: var(--blue); }
+  .kpi-card.average .kpi-value { color: var(--gold); }
+  .kpi-card.items .kpi-value { color: var(--green); }
+
+  .kpi-meta {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 22px 22px 12px;
+    flex-wrap: wrap;
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 24px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .section-head p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .section-body {
+    padding: 0 22px 22px;
+  }
+
+  .bar-chart {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+    min-height: 230px;
+    padding-top: 10px;
+  }
+
+  .bar-col {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+  }
+
+  .bar-wrap {
+    height: 170px;
+    width: 100%;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+  }
+
+  .bar {
+    width: min(48px, 100%);
+    border-radius: 16px 16px 8px 8px;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    min-height: 12px;
+    box-shadow: inset 0 -10px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .bar-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .bar-meta,
+  .bar-label {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .metric-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .metric-row {
+    display: grid;
+    gap: 6px;
+  }
+
+  .metric-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .metric-line strong {
+    font-weight: 600;
+  }
+
+  .track {
+    height: 7px;
+    border-radius: 999px;
+    background: var(--panel-3);
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  .fill.alt {
+    background: linear-gradient(90deg, var(--blue), #5dade2);
+  }
+
+  .top-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .top-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .top-item:last-child {
+    border-bottom: 0;
+  }
+
+  .rank {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 24px;
+    color: var(--line);
+    text-align: center;
+  }
+
+  .top-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .top-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .top-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .status-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .status-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--panel-2);
+  }
+
+  .status-card strong {
+    display: block;
+    text-transform: capitalize;
+    color: var(--ink);
+  }
+
+  .status-card span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .status-badge.completed { background: var(--green-bg); color: var(--green); }
+  .status-badge.pending { background: var(--gold-bg); color: var(--gold); }
+  .status-badge.cancelled { background: var(--red-bg); color: var(--red); }
+
+  .table-card {
+    overflow: hidden;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 12px 16px;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  tbody td {
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  tbody tr:hover {
+    background: rgba(245, 237, 228, 0.55);
+  }
+
+  .order-id {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .subtle {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .empty {
+    padding: 18px;
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    color: var(--muted);
+    background: var(--panel-2);
+  }
+
+  @media (max-width: 1100px) {
+    .kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .row-two,
+    .row-three {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    #content {
+      padding: 18px 14px 30px;
+    }
+
+    .kpi-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bar-chart {
+      gap: 8px;
+    }
+
+    .bar-value {
+      font-size: 10px;
+    }
+
+    .section-head,
+    .section-body {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    tbody td,
+    thead th {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Dashboard</div>
+      <h1>Sales <em>Report</em></h1>
+      <p>Styled like your reference design, but powered by real cafe orders, payment totals, and menu-driven sales data from Django admin.</p>
+    </div>
+    <div style="display:grid; gap:10px; justify-items:end;">
+      <div class="period-pills">
+        <span class="period-pill">Today</span>
+        <span class="period-pill active">This Week</span>
+        <span class="period-pill">All Time</span>
+      </div>
+      <div class="action-row">
+        <a class="action-link" href="{% url 'admin:index' %}">Dashboard</a>
+        <a class="action-link" href="{{ orders_url }}">Orders</a>
+        <a class="action-link" href="{{ menu_url }}">Menu</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="kpi-grid">
+    <article class="card kpi-card revenue">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value">{{ dashboard_cards.0.value }}</div>
+      <div class="kpi-meta">{{ dashboard_cards.0.meta }}</div>
+    </article>
+    <article class="card kpi-card orders">
+      <div class="kpi-label">Total Orders</div>
+      <div class="kpi-value">{{ total_orders_count }}</div>
+      <div class="kpi-meta">{{ dashboard_cards.1.meta }}</div>
+    </article>
+    <article class="card kpi-card average">
+      <div class="kpi-label">Avg Order Value</div>
+      <div class="kpi-value">Rs. {{ avg_order_value|floatformat:2 }}</div>
+      <div class="kpi-meta">Average revenue per saved order</div>
+    </article>
+    <article class="card kpi-card items">
+      <div class="kpi-label">Items Sold</div>
+      <div class="kpi-value">{{ total_items_sold }}</div>
+      <div class="kpi-meta">Completed item quantity sold</div>
+    </article>
+  </section>
+
+  <section class="row-two">
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <h2>Revenue Over Time</h2>
+          <p>Last seven days of recorded order revenue.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="bar-chart">
+          {% for day in daily_breakdown %}
+          <div class="bar-col">
+            <div class="bar-value">Rs. {{ day.revenue|floatformat:0 }}</div>
+            <div class="bar-wrap">
+              <div class="bar" style="height: {{ day.height_pct }}%;"></div>
+            </div>
+            <div class="bar-label">{{ day.label }}</div>
+            <div class="bar-meta">{{ day.orders }} orders</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <h2>Sales by Category</h2>
+          <p>Revenue contribution by menu category.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        {% if category_breakdown %}
+        <div class="metric-list">
+          {% for row in category_breakdown %}
+          <div class="metric-row">
+            <div class="metric-line">
+              <strong>{{ row.name }}</strong>
+              <span>Rs. {{ row.revenue|floatformat:2 }} ? {{ row.pct }}%</span>
+            </div>
+            <div class="track"><div class="fill" style="width: {{ row.pct }}%;"></div></div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Category sales will appear after completed orders are saved.</div>
+        {% endif %}
+      </div>
+    </article>
+  </section>
+
+  <section class="row-three">
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <h2>Top Selling Items</h2>
+          <p>Most valuable items by saved revenue.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        {% if top_items %}
+        <div class="top-list">
+          {% for item in top_items %}
+          <div class="top-item">
+            <div class="rank">{{ forloop.counter }}</div>
+            <div>
+              <div class="top-name">{{ item.name }}</div>
+              <div class="top-meta">{{ item.qty }} sold</div>
+            </div>
+            <div class="top-value">Rs. {{ item.revenue|floatformat:2 }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Top items will appear after a few completed orders.</div>
+        {% endif %}
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <h2>Payment Methods</h2>
+          <p>Transaction split by payment type.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        {% if payment_breakdown %}
+        <div class="metric-list">
+          {% for row in payment_breakdown %}
+          <div class="metric-row">
+            <div class="metric-line">
+              <strong>{{ row.payment_method|title }}</strong>
+              <span>{{ row.count }} orders ? Rs. {{ row.total|default:0|floatformat:2 }}</span>
+            </div>
+            <div class="track"><div class="fill alt" style="width: {{ row.pct }}%;"></div></div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Payment method totals will appear after orders are saved.</div>
+        {% endif %}
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <h2>Order Status</h2>
+          <p>Current pipeline of active orders.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        {% if status_breakdown %}
+        <div class="status-grid">
+          {% for row in status_breakdown %}
+          <div class="status-card">
+            <div>
+              <strong>{{ row.status|title }}</strong>
+              <span>{{ row.count }} orders ? Rs. {{ row.total|default:0|floatformat:2 }}</span>
+            </div>
+            <span class="status-badge {{ row.status }}">{{ row.status|title }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Status breakdown will appear here when orders are available.</div>
+        {% endif %}
+      </div>
+    </article>
+  </section>
+
+  <section class="card table-card">
+    <div class="section-head">
+      <div>
+        <h2>Recent Orders</h2>
+        <p>Latest order history with customer, payment, items, and totals.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      {% if recent_orders %}
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Placed At</th>
+            <th>Items Ordered</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+          <tr>
+            <td><span class="order-id">#{{ order.instance.id }}</span></td>
+            <td>
+              {{ order.instance.customer_name|default:"Guest" }}
+              <span class="subtle">{{ order.instance.customer_phone|default:"No phone" }}</span>
+            </td>
+            <td>
+              {{ order.instance.created_at|date:"D, d M Y" }}
+              <span class="subtle">{{ order.instance.created_at|date:"h:i A" }}</span>
+            </td>
+            <td>
+              {{ order.items_summary }}
+              <span class="subtle">Recorded from checkout</span>
+            </td>
+            <td>{{ order.instance.get_payment_method_display }}</td>
+            <td>Rs. {{ order.instance.total_amount|floatformat:2 }}</td>
+            <td><span class="status-badge {{ order.instance.status }}">{{ order.instance.get_status_display }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="section-body">
+        <div class="empty">No orders have been saved yet.</div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

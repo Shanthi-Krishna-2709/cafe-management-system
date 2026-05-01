@@ -1,0 +1,391 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Café</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --bg: #f5f0eb;
+            --card-bg: #ffffff;
+            --accent: #6b3f2a;
+            --accent2: #a0522d;
+            --btn: #7c3f5e;
+            --btn-hover: #5a2d44;
+            --text: #2c1a0e;
+            --subtext: #7a5c44;
+            --shadow: 0 4px 24px rgba(107,63,42,0.10);
+            --green: #2e7d52;
+            --green-hover: #1f5c3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: #ffffff;
+            background-color: var(--btn);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--subtext);
+            font-size: 0.95rem;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--btn);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        .bill-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .bill-header {
+            border-bottom: 2px solid #e8ddd5;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .bill-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .bill-number {
+            color: var(--subtext);
+            font-size: 0.9rem;
+        }
+
+        .items-list {
+            margin-bottom: 30px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0ede8;
+            align-items: center;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .item-qty {
+            font-size: 0.85rem;
+            color: var(--subtext);
+        }
+
+        .item-price {
+            text-align: right;
+            font-weight: 600;
+            color: var(--accent2);
+            min-width: 80px;
+        }
+
+        .bill-summary {
+            background: #f9f7f4;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 0.95rem;
+        }
+
+        .summary-row.subtotal {
+            border-bottom: 1px solid #e8ddd5;
+            margin-bottom: 10px;
+            padding-bottom: 15px;
+        }
+
+        .summary-row.gst {
+            color: var(--subtext);
+        }
+
+        .summary-row.total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--btn);
+            border-top: 2px solid #e8ddd5;
+            padding-top: 15px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--btn);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107,63,42,0.2);
+        }
+
+        .btn-secondary {
+            background: #e8ddd5;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #dcccc6;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46,125,82,0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--subtext);
+        }
+
+        .empty-state h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .payment-info {
+            background: linear-gradient(135deg, #fff9f0 0%, #fffbf7 100%);
+            border-left: 4px solid var(--green);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .payment-info h3 {
+            color: var(--text);
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .payment-info p {
+            color: var(--subtext);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 18px 14px;
+            }
+
+            .bill-section {
+                padding: 20px 16px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .item-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-price {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.55rem;
+                padding: 16px;
+            }
+
+            .summary-row.total {
+                font-size: 1.1rem;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'cart' %}" class="back-button">← Back to Cart</a>
+
+        <header>
+            <h1>📋 Order Summary</h1>
+            <p>Review your order before payment</p>
+        </header>
+
+        {% if items %}
+            <div class="bill-section">
+                <div class="bill-header">
+                    <h2>Your Order</h2>
+                    <p class="bill-number">Order Date: {{ "now"|date:"d M Y, H:i" }}</p>
+                </div>
+
+                <div class="items-list">
+                    {% for item, qty, price in items %}
+                        <div class="item-row">
+                            <div class="item-info">
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-qty">Qty: {{ qty }} × ₹{{ item.price }}</div>
+                            </div>
+                            <div class="item-price">₹{{ price }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="bill-summary">
+                    <div class="summary-row subtotal">
+                        <span>Subtotal</span>
+                        <span>₹{{ total }}</span>
+                    </div>
+                    <div class="summary-row gst">
+                        <span>GST (5%)</span>
+                        <span>₹{{ gst|floatformat:2 }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Amount</span>
+                        <span>₹{{ grand_total|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+                <div class="payment-info">
+                    <h3>💳 Ready to Pay?</h3>
+                    <p>
+                        Choose your preferred payment method on the next page:
+                    </p>
+                    <p style="margin-top: 10px; color: var(--text);">
+                        ✓ UPI QR Code (Google Pay, PhonePe, BHIM)<br>
+                        ✓ NetBanking QR Code<br>
+                        ✓ Credit/Debit Card (via Razorpay)
+                    </p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'cart' %}" class="btn btn-secondary">← Modify Order</a>
+                    <a href="{% url 'payment' %}" class="btn btn-success">Proceed to Payment →</a>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e8ddd5; text-align: center;">
+                <p style="color: var(--subtext); font-size: 0.85rem;">
+                    🔒 Your payment information is secure and encrypted<br>
+                    ✓ Quick & Easy Checkout Process
+                </p>
+            </div>
+
+        {% else %}
+            <div class="bill-section">
+                <div class="empty-state">
+                    <h2>🛒 Your cart is empty</h2>
+                    <p>Add some delicious items to your cart and come back here!</p>
+                    <br>
+                    <a href="{% url 'menu' %}" class="btn btn-primary">← Back to Menu</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

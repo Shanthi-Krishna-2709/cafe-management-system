@@ -1,0 +1,736 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frost Haven -Menu</title>
+  <link rel="icon" href="{% static 'images/logo.jpeg' %}"> 
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f0eb;
+      --card-bg: #ffffff;
+      --accent: #6b3f2a;
+      --accent2: #a0522d;
+      --btn: #7c3f5e;
+      --btn-hover: #5a2d44;
+      --text: #2c1a0e;
+      --subtext: #7a5c44;
+      --shadow: 0 4px 24px rgba(107,63,42,0.10);
+      --green: #2e7d52;
+      --green-hover: #1f5c3a;
+  
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      padding: 30px 20px 80px;
+    }
+    header { text-align: center; margin-bottom: 36px; }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      color: var(#ffffff);
+      letter-spacing: 1px;
+      background-color: #7c3f5e;
+    }
+    header p { color: var(--subtext); margin-top: 6px; font-size: 1rem; }
+    .nav-btn {
+      display: inline-block;
+      background: var(--btn);
+      color: #fff;
+      padding: 8px 28px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      text-decoration: none;
+      margin-bottom: 18px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+    }
+    .cart-bar {
+      position: fixed;
+      top: 16px; right: 20px;
+      background: var(--btn);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      z-index: 300;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cart-bar:hover { background: var(--btn-hover); }
+    .cart-bar span { font-weight: 700; }
+    .nav-links {
+      position: fixed;
+      top: 20px; left: 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 300;
+    }
+    .nav-link {
+      background: var(--btn);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .nav-link:hover {
+      background: var(--btn-hover);
+    }
+    .page-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 74px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 22px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(107,63,42,0.16); }
+    .card-img { width: 100%; height: 145px; object-fit: cover; display: block; background: #e8ddd5; }
+    .card-body {
+      padding: 14px 12px 16px;
+      text-align: center; width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+    }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--text); font-weight: 600; }
+    .card-price { color: var(--accent2); font-weight: 500; font-size: 0.95rem; }
+    .add-btn {
+      background: var(--btn); color: #fff; border: none; border-radius: 7px;
+      padding: 8px 20px; font-size: 0.87rem; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: background 0.2s, transform 0.1s; margin-top: 4px;
+    }
+    .add-btn:hover { background: var(--btn-hover); }
+    .add-btn:active { transform: scale(0.96); }
+    .section-title {
+      grid-column: 1 / -1;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; color: var(--accent);
+      border-bottom: 2px solid #d9c4b0; padding-bottom: 6px; margin-top: 14px;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 400;
+      align-items: center; justify-content: center;
+    }
+    .overlay.active { display: flex; }
+
+    /* CART PANEL */
+    .cart-panel {
+      background: #fff; border-radius: 20px;
+      width: 95%; max-width: 500px; max-height: 85vh;
+      overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      padding: 28px 24px 24px; position: relative;
+    }
+    .cart-panel h2 { font-family: 'Playfair Display', serif; color: var(--accent); font-size: 1.5rem; margin-bottom: 18px; }
+    .close-btn { position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--subtext); }
+    .cart-empty { color: var(--subtext); text-align: center; padding: 30px 0; font-size: 1rem; }
+    .cart-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid #f0e8e0; gap: 10px;
+    }
+    .cart-item-name { font-weight: 500; color: var(--text); font-size: 0.97rem; flex: 1; }
+    .qty-control { display: flex; align-items: center; gap: 8px; }
+    .qty-btn {
+      background: var(--btn); color: #fff; border: none; border-radius: 50%;
+      width: 26px; height: 26px; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .qty-btn:hover { background: var(--btn-hover); }
+    .qty-num { font-weight: 600; min-width: 20px; text-align: center; color: var(--text); }
+    .cart-item-price { color: var(--accent2); font-weight: 600; min-width: 60px; text-align: right; }
+    .remove-btn { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 1.1rem; margin-left: 6px; }
+    .cart-total-row {
+      display: flex; justify-content: space-between;
+      margin-top: 18px; padding-top: 14px;
+      border-top: 2px solid #e8d8cc;
+      font-size: 1.1rem; font-weight: 700; color: var(--accent);
+    }
+    .checkout-btn {
+      width: 100%; margin-top: 18px; background: var(--green); color: #fff;
+      border: none; border-radius: 10px; padding: 13px; font-size: 1rem;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; font-weight: 600;
+      letter-spacing: 0.5px; transition: background 0.2s;
+    }
+    .checkout-btn:hover { background: var(--green-hover); }
+    .clear-btn {
+      width: 100%; margin-top: 10px; background: #f0e8e0; color: var(--subtext);
+      border: none; border-radius: 10px; padding: 10px; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s;
+    }
+    .clear-btn:hover { background: #e0d0c4; }
+
+    /* CHECKOUT PANEL */
+    .checkout-panel {
+      background: #fff; border-radius: 20px; width: 95%; max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25); padding: 30px 26px 26px; position: relative;
+    }
+    .checkout-panel h2 { font-family: 'Playfair Display', serif; color: var(--accent); font-size: 1.45rem; margin-bottom: 6px; }
+    .checkout-panel p { color: var(--subtext); font-size: 0.93rem; margin-bottom: 22px; }
+    .bill-preview {
+      background: #faf6f2; border-radius: 12px; padding: 16px;
+      margin-bottom: 20px; max-height: 200px; overflow-y: auto;
+      border: 1px solid #e8d8cc;
+    }
+    .bill-row { display: flex; justify-content: space-between; font-size: 0.92rem; color: var(--text); padding: 4px 0; border-bottom: 1px dashed #e0d0c4; }
+    .bill-row:last-child { border-bottom: none; }
+    .bill-grand { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.05rem; color: var(--accent); margin-top: 10px; padding-top: 10px; border-top: 2px solid #d9c4b0; }
+    .action-btns { display: flex; flex-direction: column; gap: 12px; }
+    .action-btn {
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      font-size: 1rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .action-btn:active { transform: scale(0.98); }
+    .btn-print { background: #2c5f8a; color: #fff; }
+    .btn-print:hover { background: #1e4468; }
+    .btn-pay { background: var(--green); color: #fff; }
+    .btn-pay:hover { background: var(--green-hover); }
+    .btn-download { background: #b5451b; color: #fff; }
+    .btn-download:hover { background: #8c3414; }
+    .btn-back { background: #f0e8e0; color: var(--subtext); font-weight: 500; }
+    .btn-back:hover { background: #e0d0c4; }
+
+    /* PDF badge on download button */
+    .pdf-badge {
+      background: #fff; color: #b5451b;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* PAY PANEL */
+    .pay-panel {
+      background: #fff; border-radius: 20px; width: 95%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      padding: 30px 26px 26px; position: relative; text-align: center;
+    }
+    .pay-panel h2 { font-family: 'Playfair Display', serif; color: var(--accent); font-size: 1.4rem; margin-bottom: 8px; }
+    .pay-amount { font-size: 2rem; font-weight: 700; color: var(--green); margin: 16px 0; }
+    .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+    .pay-method-btn {
+      padding: 14px 10px; border: 2px solid #e0d0c4; border-radius: 12px;
+      background: #faf6f2; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      font-size: 0.93rem; color: var(--text); font-weight: 500;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .pay-method-btn:hover { border-color: var(--btn); background: #f5eef8; }
+    .pay-method-btn.selected { border-color: var(--btn); background: #f0e4f0; }
+    .pay-method-icon { font-size: 1.6rem; }
+    .confirm-pay-btn {
+      width: 100%; padding: 13px; background: var(--green); color: #fff;
+      border: none; border-radius: 10px; font-size: 1rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      cursor: pointer; transition: background 0.2s; margin-top: 6px;
+    }
+    .confirm-pay-btn:hover { background: var(--green-hover); }
+
+    /* SUCCESS PANEL */
+    .success-panel {
+      background: #fff; border-radius: 20px; width: 95%; max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25); padding: 40px 26px; text-align: center;
+    }
+    .success-icon { font-size: 4rem; margin-bottom: 14px; }
+    .success-panel h2 { font-family: 'Playfair Display', serif; color: var(--green); font-size: 1.6rem; margin-bottom: 8px; }
+    .success-panel p { color: var(--subtext); margin-bottom: 24px; }
+    .success-panel button {
+      padding: 12px 32px; background: var(--btn); color: #fff;
+      border: none; border-radius: 10px; font-size: 1rem;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #3a2010; color: #fff; padding: 11px 28px;
+      border-radius: 30px; font-size: 0.93rem; opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 500; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 900px) {
+      .page-shell {
+        padding-top: 88px;
+      }
+
+      .cart-bar {
+        top: 14px;
+        right: 14px;
+        padding: 10px 18px;
+      }
+
+      .nav-links {
+        top: 14px;
+        left: 14px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 14px 64px;
+      }
+
+      .page-shell {
+        padding-top: 0;
+      }
+
+      .cart-bar,
+      .nav-links {
+        position: static;
+      }
+
+      .cart-bar {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      .nav-links {
+        margin-bottom: 12px;
+      }
+
+      .nav-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      header {
+        margin-bottom: 24px;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+      }
+
+      .card-img {
+        height: 132px;
+      }
+
+      .cart-panel,
+      .checkout-panel,
+      .pay-panel,
+      .success-panel {
+        width: min(100%, 420px);
+        padding: 22px 18px 18px;
+      }
+
+      .cart-item {
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .pay-methods {
+        grid-template-columns: 1fr;
+      }
+
+      .toast {
+        width: calc(100% - 28px);
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Links -->
+
+  <div class="page-shell">
+  <div class="cart-bar" onclick="openCart()">🛒 Cart: <span id="cart-count">0</span></div>
+
+  <header>
+    <div style="text-align: left;"><a href="{% url 'home' %}"><button class="nav-btn">Home</button></a>
+      
+    </div>
+    <h1>☕ Our Menu</h1>
+    <p>Freshly brewed &amp; crafted with love</p>
+  </header>
+
+  <div class="grid">
+    {% for section in menu_sections %}
+      <div class="section-title">{{ section.category }}</div>
+      {% for item in section.items %}
+        <div class="card">
+          {% if item.is_external %}
+            <img class="card-img" src="{{ item.image }}" alt="{{ item.name }}"/>
+          {% else %}
+            <img class="card-img" src="{% static item.image %}" alt="{{ item.name }}"/>
+          {% endif %}
+          <div class="card-body">
+            <div class="card-name">{{ item.name }}</div>
+            <div class="card-price">Rs.{{ item.price }}</div>
+            <button class="add-btn" onclick="addToCart('{{ item.name|escapejs }}', Number('{{ item.price }}'))">Add to Cart</button>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+
+  <!-- CART OVERLAY -->
+  <div class="overlay" id="cart-overlay" onclick="closeOverlay(event,'cart-overlay')">
+    <div class="cart-panel" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closePanel('cart-overlay')">✕</button>
+      <h2>🛒 Your Cart</h2>
+      <div id="cart-items-list"></div>
+      <div id="cart-footer"></div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT OVERLAY -->
+  <div class="overlay" id="checkout-overlay" onclick="closeOverlay(event,'checkout-overlay')">
+    <div class="checkout-panel" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closePanel('checkout-overlay')">✕</button>
+      <h2>🧾 Checkout</h2>
+      <p>Review your order before paying</p>
+      <div class="bill-preview" id="bill-preview"></div>
+      <div class="action-btns">
+        <button class="action-btn btn-print" onclick="printBill()">🖨️ Print Bill</button>
+        <button class="action-btn btn-download" onclick="downloadPDF()">⬇️ Download Bill &nbsp;<span class="pdf-badge">PDF</span></button>
+        <a href="{% url 'payment' %}" class="action-btn btn-pay" style="text-decoration: none;" onclick="persistCart()">Pay Now</a>
+        <button class="action-btn btn-back" onclick="goBackToCart()">Back to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAY OVERLAY -->
+  <div class="overlay" id="pay-overlay" onclick="closeOverlay(event,'pay-overlay')">
+    <div class="pay-panel" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closePanel('pay-overlay')">✕</button>
+      <h2>💳 Pay Now</h2>
+      <p style="color:var(--subtext);font-size:0.93rem;">Select payment method</p>
+      <div class="pay-amount" id="pay-amount-display">₹0</div>
+      <div class="pay-methods">
+        <button class="pay-method-btn" onclick="selectPayMethod(this)"><span class="pay-method-icon">💵</span>Cash <div class="pay-sub">Pay at counter</div></button>
+        <button class="pay-method-btn" onclick="selectPayMethod(this)"><span class="pay-method-icon">📱</span>UPI <div class="pay-sub">Scan QR code</div></button>
+        <button class="pay-method-btn" onclick="selectPayMethod(this)"><span class="pay-method-icon">💳</span>Card <div class="pay-sub">Debit/Credit card</div></button>
+        <button class="pay-method-btn" onclick="selectPayMethod(this)"><span class="pay-method-icon">🏦</span>Net Banking <div class="pay-sub">Scan QR code</div></button>
+      </div>
+      <button class="confirm-pay-btn" onclick="confirmPayment()">✅ Confirm Payment</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="overlay" id="success-overlay">
+    <div class="success-panel">
+      <div class="success-icon">✅</div>
+      <h2>Order Confirmed!</h2>
+      <p>Thank you for your order. Our team will prepare your order shortly! ☕</p>
+      <button onclick="resetAll()">Back to Menu</button>
+    </div>
+  </div>
+
+  <div id="print-area" style="display:none;"></div>
+  <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    let cart = {};
+    let selectedPayMethod = '';
+
+    function addToCart(name, price) {
+      console.log('addToCart called with:', name, price);
+      if (cart[name]) cart[name].qty++;
+      else cart[name] = { price, qty: 1 };
+      console.log('Cart after add:', cart);
+      persistCart();
+      updateCartCount();
+      showToast('Added to cart: ' + name);
+      openCart();
+    }
+
+    function updateCartCount() {
+      document.getElementById('cart-count').textContent =
+        Object.values(cart).reduce((s, i) => s + i.qty, 0);
+    }
+
+    function getTotal() {
+      return Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cart-overlay').classList.add('active');
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cart-items-list');
+      const footer = document.getElementById('cart-footer');
+      const keys = Object.keys(cart);
+      if (!keys.length) {
+        list.innerHTML = '<div class="cart-empty">🛒 Your cart is empty!<br>Add some items from the menu.</div>';
+        footer.innerHTML = '';
+        return;
+      }
+      list.innerHTML = keys.map(name => `
+        <div class="cart-item">
+          <div class="cart-item-name">${name}</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('${name}',-1)">−</button>
+            <span class="qty-num">${cart[name].qty}</span>
+            <button class="qty-btn" onclick="changeQty('${name}',1)">+</button>
+          </div>
+          <div class="cart-item-price">₹${cart[name].price * cart[name].qty}</div>
+          <button class="remove-btn" onclick="removeItem('${name}')">🗑</button>
+        </div>`).join('');
+      footer.innerHTML = `
+        <div class="cart-total-row"><span>Total</span><span>₹${getTotal()}</span></div>
+        <button class="checkout-btn" onclick="openCheckout()">🧾 Checkout</button>
+        <button class="clear-btn" onclick="clearCart()">🗑 Clear Cart</button>`;
+    }
+
+    function changeQty(name, d) {
+      cart[name].qty += d;
+      if (cart[name].qty <= 0) delete cart[name];
+      persistCart();
+      updateCartCount(); renderCart();
+    }
+    function removeItem(name) { delete cart[name]; persistCart(); updateCartCount(); renderCart(); }
+    function clearCart() { cart = {}; persistCart(); updateCartCount(); renderCart(); }
+
+    function openCheckout() {
+      closePanel('cart-overlay');
+      renderBillPreview();
+      document.getElementById('checkout-overlay').classList.add('active');
+    }
+
+    function renderBillPreview() {
+      const keys = Object.keys(cart);
+      document.getElementById('bill-preview').innerHTML =
+        keys.map(name => `
+          <div class="bill-row">
+            <span>${name} × ${cart[name].qty}</span>
+            <span>₹${cart[name].price * cart[name].qty}</span>
+          </div>`).join('') +
+        `<div class="bill-grand"><span>Grand Total</span><span>₹${getTotal()}</span></div>`;
+      document.getElementById('pay-amount-display').textContent = '₹' + getTotal();
+    }
+
+    function goBackToCart() { closePanel('checkout-overlay'); openCart(); }
+
+    // ── PRINT ──
+    function printBill() {
+      const pa = document.getElementById('print-area');
+      pa.style.display = 'block';
+      pa.innerHTML = buildBillContent();
+      window.print();
+      pa.style.display = 'none';
+      showToast('🖨️ Sending to printer...');
+    }
+
+    // ── DOWNLOAD AS PDF ──
+    function downloadPDF() {
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a5' });
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-IN') + '  ' + now.toLocaleTimeString('en-IN');
+        const billNo = 'BILL-' + Date.now().toString().slice(-6);
+
+        const pageW = doc.internal.pageSize.getWidth();
+        let y = 18;
+
+        // Header bar
+        doc.setFillColor(124, 63, 94);
+        doc.rect(0, 0, pageW, 28, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Cafe Bill', pageW / 2, 13, { align: 'center' });
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Thank you for dining with us!', pageW / 2, 21, { align: 'center' });
+
+        y = 36;
+        doc.setTextColor(80, 40, 20);
+        doc.setFontSize(8.5);
+        doc.text('Bill No: ' + billNo, 14, y);
+        doc.text('Date: ' + dateStr, pageW - 14, y, { align: 'right' });
+
+        y += 6;
+        doc.setDrawColor(217, 196, 176);
+        doc.line(14, y, pageW - 14, y);
+
+        // Table header
+        y += 7;
+        doc.setFillColor(245, 240, 235);
+        doc.rect(14, y - 5, pageW - 28, 9, 'F');
+        doc.setTextColor(107, 63, 42);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Item', 16, y);
+        doc.text('Qty', pageW / 2, y, { align: 'center' });
+        doc.text('Price', pageW - 16, y, { align: 'right' });
+
+        y += 3;
+        doc.setDrawColor(217, 196, 176);
+        doc.line(14, y, pageW - 14, y);
+
+        // Items
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        const keys = Object.keys(cart);
+        keys.forEach((name, idx) => {
+          y += 8;
+          if (idx % 2 === 0) {
+            doc.setFillColor(252, 249, 246);
+            doc.rect(14, y - 5.5, pageW - 28, 8, 'F');
+          }
+          doc.setTextColor(44, 26, 14);
+          doc.text(name, 16, y);
+          doc.text(String(cart[name].qty), pageW / 2, y, { align: 'center' });
+          doc.text('Rs.' + (cart[name].price * cart[name].qty), pageW - 16, y, { align: 'right' });
+        });
+
+        // Divider
+        y += 6;
+        doc.setDrawColor(107, 63, 42);
+        doc.setLineWidth(0.5);
+        doc.line(14, y, pageW - 14, y);
+
+        // Total
+        y += 8;
+        doc.setFillColor(124, 63, 94);
+        doc.rect(14, y - 6, pageW - 28, 10, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Grand Total', 16, y);
+        doc.text('Rs.' + getTotal(), pageW - 16, y, { align: 'right' });
+
+        // Footer
+        y += 16;
+        doc.setTextColor(122, 92, 68);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'italic');
+        doc.text('We hope you enjoyed your visit. Come back soon!', pageW / 2, y, { align: 'center' });
+
+        doc.save('cafe_bill_' + billNo + '.pdf');
+        showToast('📄 PDF bill downloaded!');
+      } catch(e) {
+        showToast('⚠️ PDF library loading... try again!');
+      }
+    }
+
+    function buildBillContent() {
+      const now = new Date();
+      return `<div style="font-family:monospace;max-width:400px;margin:auto;padding:20px">
+        <h2 style="text-align:center;color:#6b3f2a;">☕ Café Bill</h2>
+        <p style="text-align:center;color:#888;font-size:0.82rem;">${now.toLocaleString()}</p><hr/>
+        ${Object.keys(cart).map(n=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #ccc">
+          <span>${n} × ${cart[n].qty}</span><span>₹${cart[n].price*cart[n].qty}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:1.1rem;margin-top:12px;padding-top:10px;border-top:2px solid #333">
+          <span>Grand Total</span><span>₹${getTotal()}</span></div>
+        <p style="text-align:center;color:#888;margin-top:12px;font-size:0.82rem;">Thank you for visiting! 😊</p>
+      </div>`;
+    }
+
+    // ── PAY ──
+    function openPayPanel() {
+      document.getElementById('pay-overlay').classList.add('active');
+    }
+    function selectPayMethod(btn) {
+      document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedPayMethod = btn.textContent.trim();
+    }
+    function confirmPayment() {
+      if (!selectedPayMethod) { showToast('⚠️ Please select a payment method!'); return; }
+      closePanel('pay-overlay');
+      closePanel('checkout-overlay');
+      document.getElementById('success-overlay').classList.add('active');
+    }
+    
+    function resetAll() {
+      cart = {}; selectedPayMethod = '';
+      persistCart();
+      updateCartCount();
+      document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+      closePanel('success-overlay');
+    }
+
+    function closePanel(id) { document.getElementById(id).classList.remove('active'); }
+    function closeOverlay(e, id) { if (e.target === document.getElementById(id)) closePanel(id); }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    function persistCart() {
+      localStorage.setItem('cafe_cart', JSON.stringify(cart));
+    }
+
+    function loadCart() {
+      try {
+        cart = JSON.parse(localStorage.getItem('cafe_cart') || '{}') || {};
+      } catch (error) {
+        cart = {};
+      }
+      updateCartCount();
+    }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>

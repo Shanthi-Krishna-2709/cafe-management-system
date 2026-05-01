@@ -1,0 +1,681 @@
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gallery —  Frost Haven</title>
+<link rel="icon" href="{% static 'images/logo.jpeg' %}"> 
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#1e0f0a;
+  --white:#ffffff;
+  --ink:#f5ede6;
+  --muted:#a8897a;
+  --line:#3d1f15;
+  --accent:#e8a87c;
+  --accent-light:#2e1109;
+  --card-radius:16px;
+  --surface:#2a1209;
+  --surface2:#33160d;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background-color:   #3b141c;
+  color:var(--ink);
+  font-family:'Outfit',sans-serif;
+  font-weight:300;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── DEEP COFFEE RADIAL GLOW ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(180,70,20,.22) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(120,30,10,.28) 0%, transparent 65%);
+}
+
+/* ── GRAIN OVERLAY ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  pointer-events:none;z-index:1000;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.4;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 48px;
+  background:rgba(20,8,4,0.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:20px;font-weight:600;letter-spacing:.04em;
+  color:var(--ink);text-decoration:none;
+}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px}
+.nav-links a{
+  font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+@media(max-width:640px){
+  nav{padding:16px 20px;gap:12px;flex-wrap:wrap}
+  .nav-links{display:flex;width:100%;justify-content:flex-start;gap:14px}
+}
+
+/* ── HERO ── */
+.hero{
+  margin-top:73px;
+  padding:72px 48px 48px;
+  display:flex;flex-direction:column;
+  gap:6px;
+  border-bottom:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.hero-tag{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--accent);display:inline-block}
+.hero h1{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(48px,7vw,96px);
+  font-weight:300;line-height:.95;
+  letter-spacing:-.02em;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{
+  margin-top:16px;
+  font-size:14px;color:var(--muted);
+  max-width:360px;line-height:1.75;
+}
+.hero-count{
+  position:absolute;right:48px;bottom:48px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(80px,12vw,160px);
+  font-weight:300;color:rgba(80,25,10,.45);
+  line-height:1;pointer-events:none;
+  user-select:none;letter-spacing:-.04em;
+}
+@media(max-width:640px){
+  .hero{padding:56px 20px 40px}
+  .hero-count{display:none}
+}
+
+/* ── FILTER TABS ── */
+.filters{
+  padding:28px 48px;
+  display:flex;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+  position:sticky;top:73px;z-index:100;
+   background-color:   #e0cdd1;
+  backdrop-filter:blur(14px);
+}
+.filter-btn{
+  padding:8px 20px;
+  border:1px solid var(--line);border-radius:100px;
+  background:var(--surface2);
+  font-family:'Outfit',sans-serif;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;
+  transition:all .25s;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(232,168,124,.15);
+}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{
+  background:var(--accent);color:#1e0f0a;
+  border-color:var(--accent);
+}
+@media(max-width:640px){
+  .filters{
+    top:105px;
+    padding:16px 20px;
+    gap:8px;
+  }
+}
+
+/* ── MASONRY GALLERY ── */
+.gallery-wrap{padding:48px 48px 80px}
+@media(max-width:640px){.gallery-wrap{padding:28px 16px 60px}}
+
+.masonry{
+  columns:3 280px;
+  column-gap:16px;
+}
+@media(max-width:768px){.masonry{columns:2 220px;column-gap:12px}}
+@media(max-width:480px){.masonry{columns:1 100%;column-gap:0}}
+
+.gallery-item{
+  break-inside:avoid;
+  margin-bottom:16px;
+  position:relative;
+  border-radius:var(--card-radius);
+  overflow:hidden;
+  cursor:pointer;
+  background:var(--surface);
+  border:1px solid var(--line);
+  animation:fadeUp .6s both;
+}
+@media(max-width:480px){.gallery-item{margin-bottom:10px}}
+
+.gallery-item img{
+  width:100%;display:block;
+  object-fit:cover;
+  transition:transform .55s cubic-bezier(.25,.46,.45,.94), filter .55s;
+  filter:saturate(.85);
+}
+.gallery-item:hover img{
+  transform:scale(1.06);
+  filter:saturate(1.1);
+}
+
+/* overlay on hover */
+.gallery-item .overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(26,23,20,.72) 0%, transparent 55%);
+  opacity:0;
+  transition:opacity .4s;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:20px;
+}
+.gallery-item:hover .overlay{opacity:1}
+.overlay-tag{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:4px;
+}
+.overlay-title{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:18px;font-weight:400;color:white;
+  line-height:1.2;
+}
+.overlay-zoom{
+  position:absolute;top:14px;right:14px;
+  width:34px;height:34px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(6px);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s .1s;
+}
+.gallery-item:hover .overlay-zoom{opacity:1}
+.overlay-zoom svg{width:16px;height:16px;fill:white}
+
+/* touch devices — always show overlay a bit */
+@media(hover:none){
+  .gallery-item .overlay{opacity:.6}
+  .overlay-zoom{opacity:1}
+}
+
+/* stagger items */
+.gallery-item:nth-child(1){animation-delay:.04s}
+.gallery-item:nth-child(2){animation-delay:.08s}
+.gallery-item:nth-child(3){animation-delay:.12s}
+.gallery-item:nth-child(4){animation-delay:.16s}
+.gallery-item:nth-child(5){animation-delay:.20s}
+.gallery-item:nth-child(6){animation-delay:.24s}
+.gallery-item:nth-child(7){animation-delay:.28s}
+.gallery-item:nth-child(8){animation-delay:.32s}
+.gallery-item:nth-child(9){animation-delay:.36s}
+.gallery-item:nth-child(10){animation-delay:.40s}
+.gallery-item:nth-child(11){animation-delay:.44s}
+.gallery-item:nth-child(12){animation-delay:.48s}
+
+.gallery-item.hidden{display:none}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── LIGHTBOX ── */
+.lightbox{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(10,3,1,.97);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s;
+  padding:20px;
+}
+.lightbox.open{opacity:1;pointer-events:all}
+
+.lb-inner{
+  position:relative;
+  max-width:900px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+}
+.lb-img-wrap{
+  position:relative;width:100%;
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,.6);
+}
+.lb-img-wrap img{
+  width:100%;max-height:80vh;
+  object-fit:cover;display:block;
+  border-radius:18px;
+}
+.lb-caption{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.lb-cap-tag{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+}
+.lb-cap-title{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:22px;font-weight:300;color:white;
+  font-style:italic;
+}
+
+/* nav arrows */
+.lb-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background .2s;
+  z-index:10;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.lb-arrow:hover{background:rgba(200,130,74,.35)}
+.lb-arrow svg{width:20px;height:20px;fill:white}
+.lb-prev{left:-24px}
+.lb-next{right:-24px}
+@media(max-width:640px){
+  .lb-prev{left:8px}
+  .lb-next{right:8px}
+  .lb-img-wrap img{max-height:68vh}
+}
+
+/* close */
+.lb-close{
+  position:fixed;top:24px;right:24px;
+  width:44px;height:44px;
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background .2s;
+  touch-action:manipulation;
+}
+.lb-close:hover{background:rgba(200,130,74,.35)}
+.lb-close svg{width:18px;height:18px;fill:white}
+
+/* counter */
+.lb-counter{
+  position:fixed;top:28px;left:50%;transform:translateX(-50%);
+  font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);
+}
+
+/* ── FOOTER ── */
+footer{
+  padding:24px 48px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--muted);
+  background-color:   #e0cdd1;
+}
+@media(max-width:640px){
+  footer{padding:20px 24px;flex-direction:column;gap:6px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">FROST<span> HAVEN</span></a>
+  <div class="nav-links">
+    <a href="{% url 'home' %}">Home</a>
+    
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Our visual story</div>
+  <h1>Every cup,<br><em>a moment.</em></h1>
+  <p class="hero-sub">Glimpses of warmth, craft, and community — captured inside Brewed & Co.</p>
+  <div class="hero-count">18</div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="coffee">Coffee</button>
+  <button class="filter-btn" data-filter="food">Food</button>
+  <button class="filter-btn" data-filter="space">The Space</button>
+  <button class="filter-btn" data-filter="people">People</button>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-wrap">
+  <div class="masonry" id="masonry">
+
+    <!-- COFFEE -->
+    <div class="gallery-item" data-category="coffee" data-title="Morning Ritual" data-tag="Coffee">
+      <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80&auto=format&fit=crop" alt="Pour over coffee" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Coffee</div>
+        <div class="overlay-title">Morning Ritual</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="food" data-title="Almond Croissant" data-tag="Food">
+      <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80&auto=format&fit=crop" alt="Almond croissant" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Food</div>
+        <div class="overlay-title">Almond Croissant</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="space" data-title="Corner Table" data-tag="The Space">
+      <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=80&auto=format&fit=crop" alt="Café interior" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">The Space</div>
+        <div class="overlay-title">Corner Table</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="coffee" data-title="Latte Art" data-tag="Coffee">
+      <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600&q=80&auto=format&fit=crop" alt="Latte art" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Coffee</div>
+        <div class="overlay-title">Latte Art</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="people" data-title="The Barista" data-tag="People">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&auto=format&fit=crop" alt="Barista at work" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">People</div>
+        <div class="overlay-title">The Barista</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="food" data-title="Avocado Toast" data-tag="Food">
+      <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80&auto=format&fit=crop" alt="Avocado toast" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Food</div>
+        <div class="overlay-title">Avocado Toast</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="space" data-title="Golden Hour" data-tag="The Space">
+      <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80&auto=format&fit=crop" alt="Café golden hour" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">The Space</div>
+        <div class="overlay-title">Golden Hour</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="coffee" data-title="Cold Brew" data-tag="Coffee">
+      <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80&auto=format&fit=crop" alt="Cold brew coffee" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Coffee</div>
+        <div class="overlay-title">Cold Brew</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="people" data-title="Friends & Coffee" data-tag="People">
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80&auto=format&fit=crop" alt="Friends at café" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">People</div>
+        <div class="overlay-title">Friends & Coffee</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="food" data-title="Matcha Cake" data-tag="Food">
+      <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=600&q=80&auto=format&fit=crop" alt="Matcha cake slice" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Food</div>
+        <div class="overlay-title">Matcha Cake</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="space" data-title="Bookshelf Nook" data-tag="The Space">
+      <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=600&q=80&auto=format&fit=crop" alt="Cozy café nook" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">The Space</div>
+        <div class="overlay-title">Bookshelf Nook</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="coffee" data-title="Espresso Pull" data-tag="Coffee">
+      <img src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&q=80&auto=format&fit=crop" alt="Espresso" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Coffee</div>
+        <div class="overlay-title">Espresso Pull</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="people" data-title="Laptop & Latte" data-tag="People">
+      <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80&auto=format&fit=crop" alt="Working at café" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">People</div>
+        <div class="overlay-title">Laptop & Latte</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="food" data-title="Berry Tart" data-tag="Food">
+      <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80&auto=format&fit=crop" alt="Berry tart" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Food</div>
+        <div class="overlay-title">Berry Tart</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="space" data-title="Bar Counter" data-tag="The Space">
+      <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=600&q=80&auto=format&fit=crop" alt="Café bar counter" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">The Space</div>
+        <div class="overlay-title">Bar Counter</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    <div class="gallery-item" data-category="coffee" data-title="Flat White" data-tag="Coffee">
+      <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=600&q=80&auto=format&fit=crop" alt="Flat white coffee" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Coffee</div>
+        <div class="overlay-title">Flat White</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+    
+
+
+    <div class="gallery-item" data-category="food" data-title="Eggs Benedict" data-tag="Food">
+      <img src="https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=600&q=80&auto=format&fit=crop" alt="Eggs benedict breakfast" loading="lazy"/>
+      <div class="overlay">
+        <div class="overlay-tag">Food</div>
+        <div class="overlay-title">Eggs Benedict</div>
+        <div class="overlay-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-close" id="lbClose">
+    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </div>
+  <div class="lb-counter" id="lbCounter">1 / 18</div>
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lbImg" src="" alt=""/>
+      <div class="lb-arrow lb-prev" id="lbPrev">
+        <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+      </div>
+      <div class="lb-arrow lb-next" id="lbNext">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+      </div>
+    </div>
+    <div class="lb-caption">
+      <div class="lb-cap-tag" id="lbTag"></div>
+      <div class="lb-cap-title" id="lbTitle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Brewed & Co. — Brooklyn, NY</span>
+  <span>Images via Unsplash</span>
+</footer>
+
+<script>
+  // ── FILTER ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.gallery-item');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      let visible = 0;
+      items.forEach(item => {
+        const match = filter === 'all' || item.dataset.category === filter;
+        item.classList.toggle('hidden', !match);
+        if(match) visible++;
+      });
+    });
+    btn.addEventListener('touchend', e => { e.preventDefault(); btn.click(); });
+  });
+
+  // ── LIGHTBOX ──
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbTitle = document.getElementById('lbTitle');
+  const lbTag = document.getElementById('lbTag');
+  const lbCounter = document.getElementById('lbCounter');
+
+  let visibleItems = () => [...items].filter(i => !i.classList.contains('hidden'));
+  let currentIdx = 0;
+
+  function openLightbox(item) {
+    const vis = visibleItems();
+    currentIdx = vis.indexOf(item);
+    showImage(currentIdx);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showImage(idx) {
+    const vis = visibleItems();
+    if(idx < 0) idx = vis.length - 1;
+    if(idx >= vis.length) idx = 0;
+    currentIdx = idx;
+    const item = vis[idx];
+    lbImg.src = item.querySelector('img').src.replace('w=600', 'w=1200');
+    lbImg.alt = item.querySelector('img').alt;
+    lbTitle.textContent = item.dataset.title;
+    lbTag.textContent = item.dataset.tag;
+    lbCounter.textContent = `${idx + 1} / ${vis.length}`;
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => openLightbox(item));
+    item.addEventListener('touchend', e => { e.preventDefault(); openLightbox(item); });
+  });
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbClose').addEventListener('touchend', e => { e.preventDefault(); closeLightbox(); });
+
+  document.getElementById('lbPrev').addEventListener('click', e => { e.stopPropagation(); showImage(currentIdx - 1); });
+  document.getElementById('lbNext').addEventListener('click', e => { e.stopPropagation(); showImage(currentIdx + 1); });
+  document.getElementById('lbPrev').addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); showImage(currentIdx - 1); });
+  document.getElementById('lbNext').addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); showImage(currentIdx + 1); });
+
+  lb.addEventListener('click', e => { if(e.target === lb) closeLightbox(); });
+
+  // keyboard nav
+  document.addEventListener('keydown', e => {
+    if(!lb.classList.contains('open')) return;
+    if(e.key === 'ArrowRight') showImage(currentIdx + 1);
+    if(e.key === 'ArrowLeft') showImage(currentIdx - 1);
+    if(e.key === 'Escape') closeLightbox();
+  });
+
+  // swipe support for lightbox
+  let touchStartX = 0;
+  lb.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+  lb.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 50) {
+      if(dx < 0) showImage(currentIdx + 1);
+      else showImage(currentIdx - 1);
+    }
+  });
+
+  // intersection observer for scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.1});
+
+  items.forEach((item, i) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(24px)';
+    item.style.transition = `opacity .55s ${i * 0.05}s, transform .55s ${i * 0.05}s`;
+    io.observe(item);
+  });
+</script>
+</body>
+</html>

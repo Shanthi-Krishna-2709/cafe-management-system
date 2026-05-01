@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frost Haven</title>
+    <link rel="icon" href="{% static 'images/logo.jpeg' %}"> 
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+
+<body>
+    <!-- Header / Navbar -->
+    <header>
+        <nav class="navbar section-content">
+            <a href="#" class="nav-logo">
+                  <h2 class="logo-text">☕ FROST HAVEN </h2>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-item" id="primary-nav">
+                <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'about' %}" class="nav-link">About </a></li>
+                <li><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
+                <li><a href="{% url 'testimonials' %}" class="nav-link">Testimonials</a></li>
+                <li><a href="{% url 'gallery' %}" class="nav-link">Gallery</a></li>
+                <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+            
+            </ul>
+        </nav>
+
+    </header>
+
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="section-content">
+                <div class="hero-details">
+                    <h2 class="title">Best Coffee</h2>
+                    <h3 class="subtitle">Make your day great with our special coffee!</h3>
+                    <p class="description">Welcome to our coffee paradise,where every bean tells a story and every cup
+                        sparks joy.</p>
+
+                    <div class="buttons">
+                        <a href="{% url 'menu' %}" class="button order-now">Order Now</a>
+                        <a href="{% url 'contact' %}" class="button contact-us">Contact Us</a>
+                    </div>
+                </div>
+                <div class="hero-image-wrapper">
+                    <img src="{% static 'images/coffee-hero-section.png' %}"
+                        alt="Steaming cup of coffee with coffee beans scattered on a wooden surface, warm and inviting atmosphere"
+                        class="hero-image">
+                    <!-- Hero image would go here -->
+
+
+
+
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const primaryNav = document.getElementById('primary-nav');
+
+        if (navToggle && primaryNav) {
+            navToggle.addEventListener('click', () => {
+                const isOpen = primaryNav.classList.toggle('is-open');
+                navToggle.classList.toggle('is-open', isOpen);
+                navToggle.setAttribute('aria-expanded', String(isOpen));
+            });
+
+            primaryNav.querySelectorAll('.nav-link').forEach((link) => {
+                link.addEventListener('click', () => {
+                    primaryNav.classList.remove('is-open');
+                    navToggle.classList.remove('is-open');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>

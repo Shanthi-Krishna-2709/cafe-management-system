@@ -1,0 +1,622 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact — Frost Haven</title>
+<link rel="icon" href="{% static 'images/logo.jpeg' %}"> 
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f7f4f0;
+  --white:#ffffff;
+  --ink:#1a1714;
+  --muted:#8c867e;
+  --line:#e3ddd7;
+  --accent:#c8824a;
+  --accent-light:#f5ede4;
+  --shadow:rgba(26,23,20,0.07);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Outfit',sans-serif;
+  font-weight:300;
+  min-height:100vh;
+  cursor:auto;
+}
+@media(pointer:fine){body{cursor:none}}
+
+/* custom cursor */
+.cursor{
+  position:fixed;width:8px;height:8px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,background .2s;
+}
+.cursor-ring{
+  position:fixed;width:32px;height:32px;
+  border:1px solid var(--accent);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform .12s ease-out,width .25s,height .25s,opacity .25s;
+  opacity:.5;
+}
+body:hover .cursor{opacity:1}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 48px;
+  background:rgba(247,244,240,0.85);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:20px;font-weight:500;letter-spacing:.04em;
+  color:var(--ink);text-decoration:none;
+}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px}
+.nav-links a{
+  font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+
+/* ── HERO STRIP ── */
+.hero{
+  margin-top:73px;
+  padding:80px 48px 60px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  gap:24px;
+}
+
+.hero-tag{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--accent);display:inline-block}
+.hero h1{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(44px,6vw,80px);
+  font-weight:300;line-height:1.02;
+  letter-spacing:-.01em;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-right{
+  text-align:right;
+  font-size:13px;color:var(--muted);
+  line-height:1.8;max-width:240px;flex-shrink:0;
+}
+
+/* ── MAIN GRID ── */
+.main{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:calc(100vh - 240px);
+}
+
+/* ── LEFT PANEL ── */
+.panel-left{
+  padding:56px 48px;
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;gap:48px;
+}
+
+/* info block */
+.info-block{display:flex;flex-direction:column;gap:4px}
+.info-label{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px;
+}
+.info-row{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+  text-decoration:none;color:var(--ink);
+  transition:padding-left .25s;
+}
+.info-row:hover{padding-left:8px}
+.info-row:last-child{border-bottom:none}
+.info-icon{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--accent-light);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.info-icon svg{width:16px;height:16px;fill:var(--accent)}
+
+.info-detail strong{display:block;font-size:14px;font-weight:500;margin-bottom:1px}
+.info-detail span{font-size:12px;color:var(--muted)}
+
+/* hours */
+.hours-grid{display:flex;flex-direction:column;gap:0}
+.hours-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.hours-row:last-child{border-bottom:none}
+.hours-row .day{color:var(--muted);font-size:12px;letter-spacing:.04em}
+.hours-row .time{font-weight:400}
+.hours-row .badge{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--accent);color:white;
+  padding:2px 8px;border-radius:100px;
+}
+
+/* map placeholder */
+.map-wrap{
+  border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);
+  position:relative;height:200px;
+  background:#e8e2db;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;
+}
+.map-wrap iframe{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  border:none;filter:sepia(.3) contrast(.95);
+}
+.map-pin{
+  width:40px;height:40px;
+  background:var(--accent);border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(200,130,74,.4);
+  animation:pin-bounce 2s ease-in-out infinite;
+}
+.map-pin svg{transform:rotate(45deg);width:18px;height:18px;fill:white}
+@keyframes pin-bounce{0%,100%{transform:rotate(-45deg) translateY(0)}50%{transform:rotate(-45deg) translateY(-6px)}}
+.map-addr{font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+/* touch tap highlight */
+a,button,.star,.soc-btn,.info-row{
+  -webkit-tap-highlight-color:rgba(200,130,74,.15);
+  touch-action:manipulation;
+}
+/* active state for touch */
+.info-row:active{background:var(--accent-light);padding-left:8px}
+.soc-btn:active{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.soc-btn:active svg{fill:white}
+.btn-submit:active{background:var(--accent);transform:scale(.98)}
+.star:active{transform:scale(1.3)}
+.social-row{display:flex;gap:10px;flex-wrap:wrap}
+.soc-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;
+  border:1px solid var(--line);
+  border-radius:100px;
+  text-decoration:none;color:var(--ink);
+  font-size:12px;letter-spacing:.05em;
+  transition:border-color .25s,background .25s,color .25s,transform .2s;
+}
+.soc-btn:hover{
+  background:var(--ink);color:var(--white);
+  border-color:var(--ink);transform:translateY(-2px);
+}
+.soc-btn svg{width:14px;height:14px;flex-shrink:0}
+.soc-btn:hover svg{fill:white}
+
+/* ── RIGHT PANEL ── */
+.panel-right{
+  padding:56px 48px;
+  display:flex;flex-direction:column;gap:48px;
+}
+
+.section-head{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:28px;font-weight:300;letter-spacing:-.01em;
+  margin-bottom:6px;
+}
+.section-sub{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* review stars */
+.stars-row{display:flex;gap:8px;margin-bottom:20px}
+.star{
+  width:36px;height:36px;cursor:pointer;
+  transition:transform .15s;
+}
+.star:hover{transform:scale(1.2)}
+.star svg{width:100%;height:100%}
+.star-empty svg{fill:var(--line)}
+.star-filled svg{fill:#f5a623}
+
+/* form fields */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+input,textarea,select{
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:300;
+  color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  resize:none;
+}
+input::placeholder,textarea::placeholder{color:#c5bdb5}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(200,130,74,.12);
+}
+textarea{min-height:100px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* divider */
+.divider{
+  height:1px;background:var(--line);
+  border:none;margin:8px 0;
+}
+
+/* submit btn */
+.btn-submit{
+  width:100%;padding:16px;
+  background:var(--ink);color:var(--white);
+  font-family:'Outfit',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  border:none;border-radius:10px;
+  cursor:pointer;
+  transition:background .2s,transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.btn-submit:hover{
+  background:var(--accent);
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(200,130,74,.3);
+}
+.btn-submit:active{transform:none}
+.form-feedback{margin-bottom:20px}
+.form-feedback .message-success{padding:12px 14px;background:#d4edda;border:1px solid #c3e6cb;color:#155724;border-radius:10px;margin-bottom:8px}
+.form-feedback .message-error{padding:12px 14px;background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;border-radius:10px;margin-bottom:8px}
+/* toast */
+.toast{
+  position:fixed;bottom:32px;left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--ink);color:var(--white);
+  padding:14px 28px;border-radius:100px;
+  font-size:13px;letter-spacing:.06em;
+  box-shadow:0 8px 32px rgba(26,23,20,.2);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;
+  opacity:0;z-index:999;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* stagger entrance */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp .7s .05s both}
+.panel-left>*{animation:fadeUp .6s both}
+.panel-left>*:nth-child(1){animation-delay:.1s}
+.panel-left>*:nth-child(2){animation-delay:.16s}
+.panel-left>*:nth-child(3){animation-delay:.22s}
+.panel-left>*:nth-child(4){animation-delay:.28s}
+.panel-left>*:nth-child(5){animation-delay:.34s}
+.panel-right>*{animation:fadeUp .6s both}
+.panel-right>*:nth-child(1){animation-delay:.2s}
+.panel-right>*:nth-child(2){animation-delay:.28s}
+.panel-right>*:nth-child(3){animation-delay:.36s}
+
+/* footer strip */
+footer{
+  padding:24px 48px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--muted);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  nav{padding:18px 24px}
+  .nav-links{display:flex;gap:16px}
+  .hero{padding:60px 24px 40px;flex-direction:column;align-items:flex-start}
+  .hero-right{text-align:left;max-width:100%}
+  .main{grid-template-columns:1fr}
+  .panel-left{padding:40px 24px;border-right:none;border-bottom:1px solid var(--line)}
+  .panel-right{padding:40px 24px}
+  .two-col{grid-template-columns:1fr}
+  footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center}
+}
+@media(max-width:640px){
+  nav{padding:16px 18px;gap:12px;flex-wrap:wrap}
+  .nav-links{width:100%;justify-content:flex-start}
+  .hero{margin-top:94px;padding:48px 18px 32px}
+  .panel-left,.panel-right{padding:28px 18px}
+  .hours-row{gap:12px;align-items:flex-start;flex-direction:column}
+  .map-wrap{height:180px}
+  .info-row{align-items:flex-start}
+}
+@media(max-width:480px){
+  .hero h1{font-size:clamp(36px,14vw,52px)}
+  .stars-row{gap:6px}
+  .star{width:30px;height:30px}
+  .soc-btn{width:100%;justify-content:center}
+  .toast{width:calc(100% - 24px);white-space:normal;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">FROST<span> HAVEN</span></a>
+  <div class="nav-links">
+    <a href="{% url 'home' %}">Home</a>
+    
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Contact us</div>
+    <h1>Come say<br><em>hello.</em></h1>
+  </div>
+  <div class="hero-right">
+    We're just around the corner.<br>
+    Stop by, call, or drop us a note —<br>
+    we'd love to hear from you.
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="panel-left">
+
+    <!-- Contact Info -->
+    <div class="info-block">
+      <div class="info-label">Reach us</div>
+      <a class="info-row" href="mob:+91 9952416372" aria-label="Call us">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        </div>
+        <div class="info-detail">
+          <strong>+91 9952416372</strong>
+          <span>Mon – Sun, 7 am – 9 pm</span>
+        </div>
+      </a>
+      <a class="info-row" href="mailto:shanthikrishna279@gmail.com" aria-label="Email us">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </div>
+        <div class="info-detail">
+          <strong>shanthikrishna279@gmail.com</strong>
+          <span>We reply within 24 hours</span>
+        </div>
+      </a>
+      <a class="info-row" href="https://www.google.com/maps/search/?api=1&query=42+Maple+Street+Brooklyn+NY" target="_blank" rel="noopener" aria-label="Get directions">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        </div>
+        <div class="info-detail">
+          <strong>42 Maple Street, Brooklyn, NY</strong>
+          <span>Get directions →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Hours -->
+    <div>
+      <div class="info-label">Opening Hours</div>
+      <div class="hours-grid">
+        <div class="hours-row">
+          <span class="day">Monday – Friday</span>
+          <span class="time">7:00 am – 9:00 pm</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Saturday</span>
+          <span class="time">8:00 am – 10:00 pm</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Sunday</span>
+          <span class="time">9:00 am – 8:00 pm</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Public Holidays</span>
+          <span class="badge">Check social</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div>
+      <div class="info-label">Find us</div>
+      <div class="map-wrap">
+        <!-- Replace src with your real embed URL -->
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2s150%20Park%20Row%2C%20New%20York%2C%20NY%2010007!5e0!3m2!1sen!2sus!4v1605543420894!5m2!1sen!2sus"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="Café location map">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Socials -->
+    <div>
+      <div class="info-label">Follow along</div>
+      <div class="social-row">
+        <a class="soc-btn" href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="var(--ink)"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Instagram
+        </a>
+        <a class="soc-btn" href="https://twitter.com/YOUR_HANDLE" target="_blank" rel="noopener" aria-label="X / Twitter">
+          <svg viewBox="0 0 24 24" fill="var(--ink)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter / X
+        </a>
+        <a class="soc-btn" href="https://facebook.com/YOUR_PAGE" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="var(--ink)"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Facebook
+        </a>
+        <a class="soc-btn" href="https://tiktok.com/@YOUR_HANDLE" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="var(--ink)"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          TikTok
+        </a>
+      </div>
+    </div>
+
+  </div>
+  
+
+
+  <!-- RIGHT -->
+  <div class="panel-right">
+
+    <form method="post" action="{% url 'contact' %}">
+      {% csrf_token %}
+
+      <div>
+        <div class="section-head">Leave a Review</div>
+        <p class="section-sub">Loved your visit? Rate your experience and share your thoughts — it means the world to us.</p>
+      </div>
+
+      <input type="hidden" name="r-rating" id="r-rating" value="0" />
+
+      <div>
+        <div class="info-label">Your Rating</div>
+        <div class="stars-row" id="starsRow">
+          <div class="star star-empty" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="star star-empty" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="star star-empty" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="star star-empty" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="star star-empty" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="r-name">Your Name</label>
+          <input type="text" id="r-name" name="r-name" placeholder="Alex Kim"/>
+        </div>
+        <div class="field">
+          <label for="r-visit">Visit Type</label>
+          <select id="r-visit" name="r-visit">
+            <option value="">Select…</option>
+            <option>Dine-in</option>
+            <option>Takeaway</option>
+            <option>Event</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="r-review">Your Review</label>
+        <textarea id="r-review" name="r-review" placeholder="Tell us about your experience — what you loved, what we can improve…"></textarea>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="section-head" style="font-size:22px;margin-bottom:6px">Send a Message</div>
+      <p class="section-sub" style="margin-bottom:20px">Have a question, reservation request, or catering inquiry? We're all ears.</p>
+
+      {% if messages %}
+        <div class="form-feedback">
+          {% for message in messages %}
+            <div class="message-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="two-col">
+        <div class="field">
+          <label for="c-email">Email</label>
+          <input type="email" id="c-email" name="c-email" placeholder="you@example.com" required/>
+        </div>
+        <div class="field">
+          <label for="c-subject">Subject</label>
+          <select id="c-subject" name="c-subject">
+            <option value="">Select…</option>
+            <option>General Enquiry</option>
+            <option>Reservation</option>
+            <option>Catering / Events</option>
+            <option>Feedback</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="c-msg">Message</label>
+        <textarea id="c-msg" name="c-msg" placeholder="How can we help you today?"> </textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">Send Review and Message</button>
+    </form>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Frost Haven — Brooklyn, NY</span>
+  <span>Made with ☕ and care</span>
+</footer>
+
+<div class="toast" id="toast">☕ Thank you! We'll be in touch soon.</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // custom cursor — only on non-touch devices
+  const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let rx=0,ry=0;
+  if(!isTouchDevice){
+    document.body.style.cursor='none';
+    document.addEventListener('mousemove',e=>{
+      cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
+      rx+=(e.clientX-rx)*.12; ry+=(e.clientY-ry)*.12;
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    });
+    requestAnimationFrame(function loop(){
+      rx+=(parseFloat(cur.style.left||0)-rx)*.12;
+      ry+=(parseFloat(cur.style.top||0)-ry)*.12;
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+      requestAnimationFrame(loop);
+    });
+    document.querySelectorAll('a,button,.star,.soc-btn').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{cur.style.width='14px';cur.style.height='14px';ring.style.width='46px';ring.style.height='46px'});
+      el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';ring.style.width='32px';ring.style.height='32px'});
+    });
+  } else {
+    cur.style.display='none';
+    ring.style.display='none';
+  }
+
+  // star rating — mouse + touch support
+  let rating=0;
+  const stars=document.querySelectorAll('.star');
+  function setStars(val){
+    rating=val;
+    document.getElementById('r-rating').value = rating;
+    stars.forEach(st=>{ st.classList.toggle('star-filled',+st.dataset.val<=rating); st.classList.toggle('star-empty',+st.dataset.val>rating); });
+  }
+  stars.forEach(s=>{
+    s.addEventListener('click',()=>setStars(+s.dataset.val));
+    s.addEventListener('touchend',e=>{e.preventDefault();setStars(+s.dataset.val);});
+    s.addEventListener('mouseenter',()=>{
+      stars.forEach(st=>{ st.classList.toggle('star-filled',+st.dataset.val<=+s.dataset.val); st.classList.toggle('star-empty',+st.dataset.val>+s.dataset.val); });
+    });
+    s.addEventListener('mouseleave',()=>{
+      stars.forEach(st=>{ st.classList.toggle('star-filled',+st.dataset.val<=rating); st.classList.toggle('star-empty',+st.dataset.val>rating); });
+    });
+  });
+  </script>
