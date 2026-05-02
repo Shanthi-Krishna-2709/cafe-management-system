@@ -398,36 +398,328 @@
       .social-row { flex-wrap: wrap; }
     }
 
+    @media (max-width: 600px) {
+      nav {
+        padding: 0.9rem 1rem;
+      }
+      .logo { font-size: 1.25rem; }
+      .home-btn { width: 100%; justify-content: center; font-size: 0.8rem; }
+      .hero-strip { margin-top: 85px; padding: 1.2rem 1rem 0; }
+      .about-section { 
+        grid-template-columns: 1fr;
+        gap: 1.3rem;
+        padding: 1.5rem 1rem 3rem;
+      }
+      .about-title { font-size: clamp(1.8rem, 10vw, 2.4rem); }
+      .about-content { padding-left: 0; text-align: center; }
+      .section-tag { font-size: 0.68rem; margin-bottom: 0.9rem; }
+      .divider { margin-left: auto; margin-right: auto; margin-bottom: 0.9rem; }
+      .about-lead { font-size: 0.98rem; line-height: 1.6; margin-bottom: 0.8rem; }
+      .about-sub { font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.3rem; }
+      .image-collage {
+        height: auto;
+        min-height: 310px;
+        padding: 0.8rem 0 1.8rem;
+        margin-bottom: 1rem;
+      }
+      .img-circle-main { 
+        width: 215px; 
+        height: 215px;
+        border: 5px solid var(--cream);
+      }
+      .ring-1 { width: 255px; height: 255px; }
+      .ring-2 { width: 295px; height: 295px; }
+      .icon-pill {
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        width: auto;
+        font-size: 0.73rem;
+        background: rgba(245, 240, 232, 0.95);
+      }
+      .badge {
+        position: absolute;
+        bottom: 25px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.7rem 1rem;
+        font-size: 0.8rem;
+      }
+      .badge-num { font-size: 1.5rem; }
+      .badge-txt { font-size: 0.65rem; }
+      .stats-row { 
+        flex-direction: column; 
+        text-align: center;
+        gap: 0.8rem; 
+        padding: 1rem;
+        margin-bottom: 1.3rem;
+      }
+      .stat { text-align: center; }
+      .stat-num { font-size: 1.6rem; }
+      .stat-label { font-size: 0.65rem; }
+      .social-row { justify-content: center; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .values-section { padding: 3.5rem 1rem; }
+      .quote-banner { padding: 2.5rem 1rem; }
+    }
+
     @media (max-width: 520px) {
       .hero-strip { padding-left: 1rem; padding-right: 1rem; }
       .home-btn { width: 100%; justify-content: center; }
-      .about-title { font-size: clamp(2rem, 11vw, 2.6rem); }
+      .about-section { 
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem 1rem 2rem;
+      }
+      .about-title { font-size: clamp(1.8rem, 10vw, 2.4rem); }
       .image-collage {
         height: auto;
-        min-height: 300px;
-        padding: 2.5rem 0;
+        min-height: 320px;
+        padding: 1rem 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      .img-circle-main { width: 210px; height: 210px; }
-      .ring-1 { width: 245px; height: 245px; }
-      .ring-2 { width: 285px; height: 285px; }
+      .img-circle-main { 
+        width: 220px; 
+        height: 220px;
+        border: 5px solid var(--cream);
+      }
+      .ring-1 { 
+        width: 260px; 
+        height: 260px;
+      }
+      .ring-2 { 
+        width: 300px; 
+        height: 300px;
+      }
       .icon-pill {
-        position: static;
-        margin-bottom: 1rem;
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        width: auto;
+        font-size: 0.75rem;
+        background: rgba(245, 240, 232, 0.95);
+        border: 1.5px solid rgba(212,134,10,0.3);
       }
       .badge {
-        bottom: 18px;
-        right: 10px;
-        padding: 0.75rem 1rem;
+        position: absolute;
+        bottom: 25px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.7rem 1rem;
+        font-size: 0.8rem;
+      }
+      .badge-num { font-size: 1.5rem; }
+      .badge-txt { font-size: 0.65rem; }
+      .about-content {
+        text-align: center;
+        padding: 0;
+      }
+      .section-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        margin-bottom: 1rem;
+      }
+      .divider {
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1rem;
+      }
+      .about-lead {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 0.8rem;
+      }
+      .about-sub {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
       }
       .stats-row {
         flex-direction: column;
-        text-align: left;
+        text-align: center;
+        gap: 0.8rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
       }
       .stat {
-        text-align: left;
+        text-align: center;
       }
+      .stat-num { font-size: 1.6rem; }
+      .stat-label { font-size: 0.65rem; }
+      .social-row { justify-content: center; }
       .values-section,
-      .quote-banner { padding-left: 1rem; padding-right: 1rem; }
+      .quote-banner { 
+        padding-left: 1rem; 
+        padding-right: 1rem; 
+      }
+    }
+
+    @media (max-width: 380px) {
+      nav {
+        padding: 0.8rem 1rem;
+      }
+      .logo { font-size: 1.1rem; }
+      .home-btn { 
+        font-size: 0.75rem;
+        padding: 0.5rem 1rem;
+      }
+      .hero-strip { 
+        padding: 1rem;
+        margin-top: 75px;
+        gap: 0.4rem;
+      }
+      .strip-label { font-size: 0.65rem; }
+      .about-section { 
+        padding: 1.5rem 0.8rem 2rem;
+        gap: 1.2rem;
+        grid-template-columns: 1fr;
+      }
+      .about-title { 
+        font-size: clamp(1.6rem, 8vw, 2rem);
+        margin-bottom: 0.8rem;
+        text-align: center;
+      }
+      .about-lead {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0.6rem;
+        text-align: center;
+      }
+      .about-sub {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+        text-align: center;
+      }
+      .image-collage {
+        height: auto;
+        min-height: 290px;
+        padding: 0.8rem 0 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .img-circle-main { 
+        width: 190px; 
+        height: 190px;
+        border: 4px solid var(--cream);
+      }
+      .ring-1 { 
+        width: 225px; 
+        height: 225px;
+        border-width: 1.5px;
+        opacity: 0.3;
+      }
+      .ring-2 { 
+        width: 260px; 
+        height: 260px;
+        border-width: 1.5px;
+        opacity: 0.1;
+      }
+      .icon-pill {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.4rem 0.7rem;
+        font-size: 0.65rem;
+        gap: 0.35rem;
+        margin: 0;
+        width: auto;
+        background: rgba(245, 240, 232, 0.95);
+        border: 1.5px solid rgba(212,134,10,0.3);
+        z-index: 4;
+      }
+      .badge {
+        position: absolute;
+        bottom: 20px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.55rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        z-index: 3;
+      }
+      .badge-num { 
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+      .badge-txt { 
+        font-size: 0.55rem;
+        margin-top: 1px;
+      }
+      .section-tag {
+        font-size: 0.62rem;
+        padding: 0.25rem 0.6rem;
+        margin-bottom: 0.8rem;
+      }
+      .divider {
+        width: 35px;
+        height: 2px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 0.8rem;
+      }
+      .about-content {
+        text-align: center;
+        padding: 0;
+      }
+      .stats-row {
+        flex-direction: column;
+        text-align: center;
+        padding: 0.85rem;
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+      }
+      .stat {
+        text-align: center;
+      }
+      .stat-num { font-size: 1.4rem; }
+      .stat-label { font-size: 0.6rem; }
+      .social-label { font-size: 0.65rem; }
+      .social-row { 
+        justify-content: center;
+        gap: 0.8rem;
+      }
+      .social-link {
+        width: 36px;
+        height: 36px;
+      }
+      .social-link svg { 
+        width: 14px; 
+        height: 14px; 
+      }
+      .values-section {
+        padding: 2.5rem 0.8rem;
+      }
+      .values-title { font-size: 1.5rem; }
+      .values-sub { font-size: 0.8rem; }
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+      .card {
+        padding: 1.3rem 1rem;
+      }
+      .card-title { font-size: 1.05rem; }
+      .card-desc { font-size: 0.8rem; }
+      .quote-banner {
+        padding: 1.8rem 0.8rem;
+      }
+      .quote-text { 
+        font-size: 1.2rem;
+        line-height: 1.5;
+      }
     }
     
   </style>
