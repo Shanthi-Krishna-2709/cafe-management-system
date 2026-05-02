@@ -87,6 +87,16 @@
                 });
             });
         }
+
+        const heroImage = document.querySelector('.hero-image');
+        if (heroImage) {
+            const showHeroImage = () => heroImage.classList.add('loaded');
+            if (heroImage.complete) {
+                showHeroImage();
+            } else {
+                heroImage.addEventListener('load', showHeroImage);
+            }
+        }
     </script>
 </body>
 
