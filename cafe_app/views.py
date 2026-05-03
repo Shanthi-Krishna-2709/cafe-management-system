@@ -414,6 +414,7 @@ def gallery(request):
 
 def contact(request):
     if request.method == 'POST':
+        logger.info("Contact form submitted")
         email = request.POST.get('c-email', '').strip()
         subject = request.POST.get('c-subject', 'New message from website').strip() or 'New message from website'
         message_body = request.POST.get('c-msg', '').strip()
@@ -422,6 +423,8 @@ def contact(request):
         visit_type = request.POST.get('r-visit', '').strip()
         review_text = request.POST.get('r-review', '').strip()
         rating = request.POST.get('r-rating', '0').strip()
+
+        logger.info(f"Email: {email}, Subject: {subject}, Message: {message_body}, Review: {review_text}")
 
         if not email or (not message_body and not review_text):
             messages.error(request, 'Please provide your email and a message or review before sending.')
@@ -447,11 +450,14 @@ def contact(request):
                     [settings.CONTACT_EMAIL],
                     fail_silently=False,
                 )
+                logger.info("Email sent successfully")
                 messages.success(request, '✅ Your message/review was sent successfully!')
                 return redirect('contact')
             except BadHeaderError:
+                logger.error("Bad header error")
                 messages.error(request, 'Invalid header found. Message not sent.')
             except Exception as e:
+                logger.error(f"Email send error: {e}")
                 messages.error(request, f'Could not send message: {e}')
 
     return render(request, 'contact.html')
